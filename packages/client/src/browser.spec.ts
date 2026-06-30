@@ -1,4 +1,3 @@
-import { describe, expect, it, vi } from "vitest";
 import { Client as BrowserClient, PRESET_NAMES } from "./browser";
 import { Client as BaseClient } from "./client";
 import type { WebhookEvent } from "./objects/events";

@@ -1,4 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { WebhookEvent } from "./objects/events";
 
 // Simulate `undici` not being installed: its lazy `import("undici")` rejects.

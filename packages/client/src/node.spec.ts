@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { FetchImpl } from "./client";
 import type { WebhookEvent } from "./objects/events";
 

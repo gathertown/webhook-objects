@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import { Client } from "./node";
 
 const SECRET = process.env.GATHER_TOWN_WHO_SECRET ?? "";
