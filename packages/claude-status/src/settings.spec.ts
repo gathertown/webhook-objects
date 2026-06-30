@@ -5,14 +5,18 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 let dir: string;
 const realHome = process.env.HOME;
+const realConfigDir = process.env.CLAUDE_CONFIG_DIR;
 
 beforeEach(async () => {
 	dir = await mkdtemp(join(tmpdir(), "claude-status-"));
 	process.env.HOME = dir; // settings path is built from homedir() at import time
+	delete process.env.CLAUDE_CONFIG_DIR; // else it wins over HOME and the test reads the wrong file
 	vi.resetModules(); // recompute SETTINGS_PATH against this temp home
 });
 afterEach(() => {
 	process.env.HOME = realHome;
+	if (realConfigDir === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+	else process.env.CLAUDE_CONFIG_DIR = realConfigDir;
 });
 
 const settingsPath = () => join(dir, ".claude", "settings.json");
