@@ -143,11 +143,13 @@ All event, capability, preset, and response types are exported from the package 
 ## Development
 
 ```bash
-pnpm test     # vitest + coverage
+pnpm test     # vitest + coverage (node + chromium projects)
 pnpm build    # vite build (JS) + tsc (.d.ts into dist/types)
 ```
 
-> `*.spec.ts` files named `chilling.spec.ts` are integration tests that hit a live endpoint; they require `GATHER_TOWN_WHO_SECRET` and `GATHER_TOWN_WHO_URL` to be set and are safe to ignore when running unit tests.
+Tests run in two projects: `node` (all specs) and `chromium` (browser-safe specs,
+via `@vitest/browser` + Playwright). Target one with `vitest run --project node`
+or `vitest run --project chromium`.
 
 ## License
 
