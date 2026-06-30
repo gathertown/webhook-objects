@@ -1,0 +1,31 @@
+{
+	"name": "@webhook-objects/claude-status",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"bin": {
+		"claude-status": "dist/index.js"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "vite build",
+		"start": "node dist/index.js",
+		"test": "vitest run"
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"@webhook-objects/client": "workspace:*"
+	},
+	"devDependencies": {
+		"@webhook-objects/z-build-config": "workspace:*"
+	}
+}

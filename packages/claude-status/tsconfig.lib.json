@@ -1,0 +1,6 @@
+{
+	"extends": "../z-build-config/ts/tsconfig.dom.json",
+	"compilerOptions": {},
+	"include": ["src/**/*.ts"],
+	"exclude": ["src/**/*.spec.ts"]
+}

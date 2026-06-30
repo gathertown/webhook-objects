@@ -1,0 +1,8 @@
+{
+	"extends": "../z-build-config/ts/tsconfig.dom.test.json",
+	"compilerOptions": {
+		"types": ["vitest/globals", "node"]
+	},
+	"include": ["src/**/*.spec.ts"],
+	"exclude": []
+}
