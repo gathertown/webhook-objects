@@ -15,25 +15,34 @@ const exec = promisify(execFile);
 /** A track read from a now-playing source. */
 export type Track = { id: string; text: string; url?: string };
 
+// The `is running` check is kept OUTSIDE the `tell` block: querying an
+// application specifier's `is running` does not launch the app, whereas
+// sending commands inside a `tell` block can. This avoids waking the other
+// player on every poll.
+
 /** Tab-delimited `id\ttext\turl` (url present for Spotify only). */
 const SPOTIFY_SCRIPT = `
-tell application "Spotify"
-	if it is running and player state is playing then
-		set t to current track
-		return (id of t) & tab & (artist of t) & " — " & (name of t) & tab & (spotify url of t)
-	end if
-end tell
+if application "Spotify" is running then
+	tell application "Spotify"
+		if player state is playing then
+			set t to current track
+			return (id of t) & tab & (artist of t) & " — " & (name of t) & tab & (spotify url of t)
+		end if
+	end tell
+end if
 return ""
 `;
 
 /** Tab-delimited `id\ttext` (no url; a search link is synthesized). */
 const MUSIC_SCRIPT = `
-tell application "Music"
-	if it is running and player state is playing then
-		set t to current track
-		return (database ID of t as string) & tab & (artist of t) & " — " & (name of t)
-	end if
-end tell
+if application "Music" is running then
+	tell application "Music"
+		if player state is playing then
+			set t to current track
+			return (database ID of t as string) & tab & (artist of t) & " — " & (name of t)
+		end if
+	end tell
+end if
 return ""
 `;
 
