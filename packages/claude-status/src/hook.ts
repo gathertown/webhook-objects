@@ -2,8 +2,13 @@
  * Map Claude Code hook events to status states.
  *
  * Only low-frequency, once-per-turn events are used so the hooks never add
- * per-tool-call latency. POC tradeoff: with no PreToolUse hook, approving a
- * permission mid-turn leaves the object on `question` until the turn's Stop.
+ * per-tool-call latency. POC tradeoffs:
+ * - With no PreToolUse hook, approving a permission mid-turn leaves the object
+ *   on `question` until the turn's Stop.
+ * - Each hook runs as its own process, so when a final-turn `Stop` (`on`) and
+ *   `SessionEnd` (`off`) fire back-to-back, their `status.set` requests can
+ *   reach the receiver out of order and the object may stick on `on`.
+ *   Ordering would need a sequence the receiver honors — out of scope here.
  *
  * @module
  */
