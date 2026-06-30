@@ -1,3 +1,4 @@
+import { isAbsolute } from "node:path";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
@@ -13,8 +14,14 @@ export default defineConfig({
 			fileName: (_, entryName) => `${entryName}.js`,
 		},
 		rolldownOptions: {
-			// specifiy a regex to externalize everything except @webhook-objects/*
-			external: /^(?!@webhook-objects).*$/,
+			// Externalize bare dependencies (e.g. standardwebhooks, undici, node
+			// builtins), but bundle internal modules — relative, absolute (resolved
+			// source paths), and @webhook-objects/* — so the emitted entries never
+			// reference un-emitted source files.
+			external: (id) =>
+				!id.startsWith(".") &&
+				!isAbsolute(id) &&
+				!id.startsWith("@webhook-objects"),
 		},
 	},
 	test: {
