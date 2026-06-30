@@ -42,14 +42,14 @@ const resolveGlobalFetch = (): FetchImpl => {
 	return globalThis.fetch.bind(globalThis);
 };
 
-/** Collision-resistant default id. Prefers `crypto.randomUUID`, with a fallback. */
-const defaultIdImpl: IdImpl = () => {
-	const unique =
-		typeof globalThis.crypto?.randomUUID === "function"
-			? globalThis.crypto.randomUUID()
-			: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
-	return `msg_${unique}`;
-};
+export function createSimpleIdGenerator() {
+	let idCounter = 0;
+
+	return () => `msg_${Date.now()}_${idCounter++}`;
+}
+
+/** Collision-resistant default id: a timestamp plus a process-local counter. */
+const defaultIdImpl = createSimpleIdGenerator();
 
 /** Normalize any `HeadersInit` (record, entries array, or `Headers`) to a record. */
 const toHeaderRecord = (headers?: HeadersInit): Record<string, string> => {
