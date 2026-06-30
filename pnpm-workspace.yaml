@@ -1,0 +1,8 @@
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+  - vite
+gitBranchLockfile: true
+allowBuilds:
+  esbuild: true
+packages:
+  - "packages/*"

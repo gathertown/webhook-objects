@@ -1,0 +1,29 @@
+{
+	"name": "@webhook-objects/monorepo",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"lint": "biome check",
+		"test": "pnpm -r test",
+		"build": "pnpm -r build"
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"packageManager": "pnpm@10.32.1",
+	"devDependencies": {
+		"@types/node": "^26.0.0",
+		"@biomejs/biome": "^2.5",
+		"tsx": "^4.22",
+		"typescript": "^6.0",
+		"vite": "^8.1",
+		"vite-plugin-node": "^8.0",
+		"vitest": "^4.1",
+		"@vitest/coverage-v8": "4.1.9"
+	}
+}
