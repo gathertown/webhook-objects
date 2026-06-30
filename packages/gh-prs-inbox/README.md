@@ -26,9 +26,11 @@ Runs until `Ctrl+C`.
 ## How it works
 
 `gh search prs --review-requested=@me --state=open` lists the PRs → each poll
-rewrites the whole feed (`activity.clear` → an `activity.add` per PR →
-`counter.set`) and signs & POSTs via `@webhook-objects/client`.
+reconciles the feed against them (`activity.add` for newly-pending PRs,
+`activity.remove` for ones now gone, then `counter.set`) and signs & POSTs via
+`@webhook-objects/client`.
 
-Unlike an append-only feed, "PRs pending review" is a *live set* — a PR leaves
-the list once reviewed or merged — so the feed is rewritten wholesale each poll
-rather than incrementally appended.
+"PRs pending review" is a *live set* — a PR leaves the list once reviewed or
+merged. Reconciling (rather than clear-and-rewrite) means a failed send only
+desyncs one entry, self-healed on the next poll, instead of emptying the feed.
+The feed is cleared once at startup to drop any stale entries from a prior run.

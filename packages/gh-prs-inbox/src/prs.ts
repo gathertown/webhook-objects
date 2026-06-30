@@ -33,6 +33,8 @@ export async function fetchPrs(): Promise<Pr[]> {
 		"prs",
 		"--review-requested=@me",
 		"--state=open",
+		// gh defaults to 30; raise to the API max so a large queue isn't truncated.
+		"--limit=1000",
 		"--json",
 		"number,title,url,repository",
 	]);

@@ -6,9 +6,11 @@
  *
  * Proof of concept — KISS. Reads PRs via the `gh` CLI (no extra deps).
  *
- * Unlike an append-only feed, "PRs pending review" is a *live set*: a PR leaves
- * the list once reviewed or merged. So each poll rewrites the feed wholesale
- * (clear → add all → set count) rather than incrementally appending.
+ * "PRs pending review" is a *live set*: a PR leaves the list once reviewed or
+ * merged. So each poll reconciles the feed against the current PRs — adding the
+ * newly-pending, removing the gone — rather than wiping and rewriting it. A
+ * failed `add`/`remove` thus only desyncs one entry (self-healed next poll)
+ * instead of clearing the whole feed.
  *
  * @module
  */
@@ -34,25 +36,46 @@ async function main() {
 	const client = new Client({ url: values.url, secret: values.secret });
 	const intervalMs = Number(values.interval) * 1000;
 
+	// Clear once at startup so a previous run's stale entries don't linger; from
+	// then on we reconcile incrementally and never wipe the feed mid-poll.
+	await client.send({
+		type: "activity.clear",
+		timestamp: new Date().toISOString(),
+		data: {},
+	});
+	// Ids currently shown on the object. Mutated as each send lands so a partial
+	// failure leaves it accurate — the next poll retries only the missing ops.
+	const shownIds = new Set<string>();
+
 	const poll = async () => {
 		try {
-			const prs = await fetchPrs();
+			const entries = (await fetchPrs()).map(prToEntry);
+			const currentIds = new Set(entries.map((e) => e.id));
 			const timestamp = new Date().toISOString();
-			// Rewrite the whole feed so PRs that are no longer pending disappear.
-			await client.send({ type: "activity.clear", timestamp, data: {} });
-			for (const pr of prs) {
-				await client.send({
-					type: "activity.add",
-					timestamp,
-					data: prToEntry(pr),
-				});
+
+			for (const entry of entries) {
+				if (!shownIds.has(entry.id)) {
+					await client.send({ type: "activity.add", timestamp, data: entry });
+					shownIds.add(entry.id);
+				}
+			}
+			for (const id of [...shownIds]) {
+				if (!currentIds.has(id)) {
+					await client.send({
+						type: "activity.remove",
+						timestamp,
+						data: { id },
+					});
+					shownIds.delete(id);
+				}
 			}
 			await client.send({
 				type: "counter.set",
 				timestamp,
-				data: { count: prs.length },
+				data: { count: entries.length },
 			});
-			console.log(`synced ${prs.length} PR(s) awaiting review`);
+
+			console.log(`synced ${entries.length} PR(s) awaiting review`);
 		} catch (err) {
 			console.error("poll failed:", err instanceof Error ? err.message : err);
 		}
@@ -60,7 +83,7 @@ async function main() {
 
 	console.log(`Polling every ${values.interval}s. Ctrl+C to stop.`);
 	// Self-scheduling loop (not setInterval) so a slow poll can never let the
-	// next tick start mid-rewrite and clobber the feed.
+	// next tick start before this one finishes reconciling.
 	let timer: ReturnType<typeof setTimeout>;
 	const tick = async () => {
 		await poll();
