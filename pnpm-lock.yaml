@@ -55,6 +55,12 @@ importers:
         specifier: ^8.5.0
         version: 8.5.0
 
+  packages/gh-prs-inbox:
+    dependencies:
+      '@webhook-objects/client':
+        specifier: workspace:*
+        version: link:../client
+
   packages/now-playing-inbox:
     dependencies:
       '@webhook-objects/client':
