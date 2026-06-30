@@ -24,12 +24,16 @@ export function parseBattery(pmset: string): BatteryReading {
 	// First line reads "Now drawing from 'AC Power'" or "'Battery Power'";
 	// the per-battery line says "charging"/"charged"/"discharging".
 	const charging =
-		/'AC Power'/.test(pmset) || /\b(charging|charged|finishing charge)\b/.test(pmset);
+		/'AC Power'/.test(pmset) ||
+		/\b(charging|charged|finishing charge)\b/.test(pmset);
 	return { percent, charging };
 }
 
 /** Is the machine running low on battery, per `pmset` text and threshold? */
-export function isLowBattery(pmset: string, threshold = DEFAULT_THRESHOLD): boolean {
+export function isLowBattery(
+	pmset: string,
+	threshold = DEFAULT_THRESHOLD,
+): boolean {
 	const { percent, charging } = parseBattery(pmset);
 	if (charging || percent === undefined) return false;
 	return percent <= threshold;

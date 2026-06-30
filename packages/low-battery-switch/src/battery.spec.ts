@@ -14,7 +14,10 @@ const CHARGED = `Now drawing from 'AC Power'
  -InternalBattery-0 (id=12345)\t100%; charged; 0:00 remaining present: true`;
 
 test("parses percent and charging state", () => {
-	expect(parseBattery(ON_BATTERY_LOW)).toEqual({ percent: 15, charging: false });
+	expect(parseBattery(ON_BATTERY_LOW)).toEqual({
+		percent: 15,
+		charging: false,
+	});
 	expect(parseBattery(PLUGGED_IN_LOW)).toEqual({ percent: 12, charging: true });
 	expect(parseBattery(CHARGED)).toEqual({ percent: 100, charging: true });
 });
