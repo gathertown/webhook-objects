@@ -1,13 +1,11 @@
 {
-	"compilerOptions": {
-		"target": "ES2022",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"strict": true,
-		"skipLibCheck": true,
-		"noEmit": true,
-		"lib": ["ES2022", "DOM"],
-		"types": ["node", "vitest/globals"]
-	},
-	"include": ["src/**/*.ts"]
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {},
+	"include": [],
+	"exclude": [],
+	"references": [
+		{ "path": "./tsconfig.lib.json" },
+		{ "path": "./tsconfig.lib.test.json" },
+		{ "path": "./tsconfig.lib.types.json" }
+	]
 }

@@ -1,0 +1,8 @@
+{
+	"name": "@webhook-objects/z-build-config",
+	"version": "1.0.0",
+	"private": true,
+	"files": [
+		"ts"
+	]
+}
