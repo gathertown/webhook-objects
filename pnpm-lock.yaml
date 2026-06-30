@@ -42,6 +42,16 @@ importers:
         specifier: ^4.1
         version: 4.1.9(@types/node@26.0.0)(@vitest/browser-playwright@4.1.9)(@vitest/coverage-v8@4.1.9)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(tsx@4.22.4))
 
+  packages/claude-status:
+    dependencies:
+      '@webhook-objects/client':
+        specifier: workspace:*
+        version: link:../client
+    devDependencies:
+      '@webhook-objects/z-build-config':
+        specifier: workspace:*
+        version: link:../z-build-config
+
   packages/client:
     dependencies:
       standardwebhooks:
