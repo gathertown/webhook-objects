@@ -71,6 +71,12 @@ importers:
         specifier: workspace:*
         version: link:../client
 
+  packages/low-battery-switch:
+    dependencies:
+      '@webhook-objects/client':
+        specifier: workspace:*
+        version: link:../client
+
   packages/now-playing-inbox:
     dependencies:
       '@webhook-objects/client':
