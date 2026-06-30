@@ -8,3 +8,4 @@ See the individual packages for more info:
 - [`@webhook-objects/now-playing-inbox`](./packages/now-playing-inbox)
 - [`@webhook-objects/gh-prs-inbox`](./packages/gh-prs-inbox)
 - [`@webhook-objects/claude-status`](./packages/claude-status)
+- [`@webhook-objects/low-battery-switch`](./packages/low-battery-switch)
