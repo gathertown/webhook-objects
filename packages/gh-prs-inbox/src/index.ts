@@ -47,42 +47,59 @@ async function main() {
 	// failure leaves it accurate — the next poll retries only the missing ops.
 	const shownIds = new Set<string>();
 
-	const poll = async () => {
+	// Send one event, isolating its failure: a single bad PR (e.g. a rejected
+	// payload) must not abort the rest of the poll or skip the counter update.
+	// Returns whether it landed, so the caller only mutates `shownIds` on success.
+	const trySend = async (event: Parameters<typeof client.send>[0]) => {
 		try {
-			const prs = await fetchPrs();
-			// The feed is a ring buffer, so only the most recent entries survive;
-			// cap to its size and let the counter report the true total.
-			const entries = feedEntries(prs, ACTIVITY_BUFFER_SIZE);
-			const currentIds = new Set(entries.map((e) => e.id));
-			const timestamp = new Date().toISOString();
+			await client.send(event);
+			return true;
+		} catch (err) {
+			console.error("send failed:", err instanceof Error ? err.message : err);
+			return false;
+		}
+	};
 
-			// Remove before add so the ring buffer never evicts a still-shown entry.
-			for (const id of [...shownIds]) {
-				if (!currentIds.has(id)) {
-					await client.send({
-						type: "activity.remove",
-						timestamp,
-						data: { id },
-					});
+	const poll = async () => {
+		let prs: Awaited<ReturnType<typeof fetchPrs>>;
+		try {
+			prs = await fetchPrs();
+		} catch (err) {
+			// No data — keep the existing feed and retry next poll.
+			console.error("fetch failed:", err instanceof Error ? err.message : err);
+			return;
+		}
+
+		// The feed is a ring buffer, so only the most recent entries survive;
+		// cap to its size and let the counter report the true total.
+		const entries = feedEntries(prs, ACTIVITY_BUFFER_SIZE);
+		const currentIds = new Set(entries.map((e) => e.id));
+		const timestamp = new Date().toISOString();
+
+		// Remove before add so the ring buffer never evicts a still-shown entry.
+		for (const id of [...shownIds]) {
+			if (!currentIds.has(id)) {
+				if (
+					await trySend({ type: "activity.remove", timestamp, data: { id } })
+				) {
 					shownIds.delete(id);
 				}
 			}
-			for (const entry of entries) {
-				if (!shownIds.has(entry.id)) {
-					await client.send({ type: "activity.add", timestamp, data: entry });
+		}
+		for (const entry of entries) {
+			if (!shownIds.has(entry.id)) {
+				if (await trySend({ type: "activity.add", timestamp, data: entry })) {
 					shownIds.add(entry.id);
 				}
 			}
-			await client.send({
-				type: "counter.set",
-				timestamp,
-				data: { count: prs.length },
-			});
-
-			console.log(`synced ${prs.length} PR(s) awaiting review`);
-		} catch (err) {
-			console.error("poll failed:", err instanceof Error ? err.message : err);
 		}
+		await trySend({
+			type: "counter.set",
+			timestamp,
+			data: { count: prs.length },
+		});
+
+		console.log(`synced ${prs.length} PR(s) awaiting review`);
 	};
 
 	console.log(`Polling every ${values.interval}s. Ctrl+C to stop.`);
