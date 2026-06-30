@@ -32,11 +32,15 @@ const isOurs = (g: HookGroup) =>
 	g.hooks?.some((h) => h.command?.includes(MARKER));
 
 async function read(): Promise<Settings> {
+	let raw: string;
 	try {
-		return JSON.parse(await readFile(SETTINGS_PATH, "utf8"));
-	} catch {
-		return {}; // missing or unparseable → start fresh (won't clobber valid JSON)
+		raw = await readFile(SETTINGS_PATH, "utf8");
+	} catch (e) {
+		if ((e as NodeJS.ErrnoException).code === "ENOENT") return {}; // missing → start fresh
+		throw e;
 	}
+	// Parse errors propagate so we abort rather than clobber a present-but-corrupt file.
+	return JSON.parse(raw);
 }
 
 async function write(settings: Settings): Promise<void> {

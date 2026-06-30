@@ -43,7 +43,10 @@ async function main() {
 			dirname(fileURLToPath(import.meta.url)),
 			"hook-entry.js",
 		);
-		const hookCmd = `${MARKER} "${node}" "${entry}" --url "${url}" --secret "${secret}"`;
+		// Single-quote every value so quotes/metacharacters in a URL or secret
+		// can't break the shell command Claude stores and runs.
+		const shq = (s: string) => `'${s.replace(/'/g, "'\\''")}'`;
+		const hookCmd = `${MARKER} ${shq(node)} ${shq(entry)} --url ${shq(url)} --secret ${shq(secret)}`;
 		const path = await installHooks(hookCmd);
 		console.log(`Installed claude-status hooks in ${path}.`);
 		console.log("Takes effect for sessions started from now on.");
