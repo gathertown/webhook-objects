@@ -1,0 +1,27 @@
+{
+	"name": "@webhook-objects/now-playing-inbox",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"os": [
+		"darwin"
+	],
+	"bin": {
+		"now-playing-inbox": "src/index.ts"
+	},
+	"scripts": {
+		"start": "tsx src/index.ts",
+		"test": "vitest run"
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"@webhook-objects/client": "workspace:*"
+	}
+}
