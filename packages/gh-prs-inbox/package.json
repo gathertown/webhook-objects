@@ -1,0 +1,24 @@
+{
+	"name": "@webhook-objects/gh-prs-inbox",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"bin": {
+		"gh-prs-inbox": "src/index.ts"
+	},
+	"scripts": {
+		"start": "tsx src/index.ts",
+		"test": "vitest run"
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"@webhook-objects/client": "workspace:*"
+	}
+}
