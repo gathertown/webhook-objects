@@ -3,6 +3,8 @@
 macOS-only PoC. Watches what's playing (Spotify, then Music) and posts each new
 track to an `inbox` webhook object's activity feed.
 
+<img src="./docs/preview.png" alt="An inbox webhook object showing recently played songs" width="312" />
+
 ## Usage
 
 ```sh

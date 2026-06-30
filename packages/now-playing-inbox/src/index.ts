@@ -48,17 +48,18 @@ async function main() {
 			const track = await readNowPlaying();
 			if (!track || track.id === lastId) return;
 			const timestamp = new Date().toISOString();
-			// Add the link, and bump the counter so the inbox renders as filling up
-			// (the inbox preset's visual state is driven by `counter`, not activity).
 			await client.send({
 				type: "activity.add",
 				timestamp,
 				data: { id: track.id, text: track.text, url: track.url },
 			});
-			await client.send({ type: "counter.increment", timestamp, data: {} });
-			// Only mark handled once both sends succeed, so a failed send retries.
+			// Mark handled as soon as the entry is recorded: a later failure must
+			// not re-add this track (which would duplicate the feed entry).
 			lastId = track.id;
 			console.log(`+ ${track.text}`);
+			// Best-effort counter bump so the inbox renders as filling up; if it
+			// fails the feed is still correct (the counter may just lag by one).
+			await client.send({ type: "counter.increment", timestamp, data: {} });
 		} catch (err) {
 			console.error("poll failed:", err instanceof Error ? err.message : err);
 		}
@@ -67,13 +68,19 @@ async function main() {
 	console.log(
 		`Watching now-playing every ${values.interval}s. Ctrl+C to stop.`,
 	);
-	await poll();
-	const timer = setInterval(poll, intervalMs);
+	// Self-scheduling loop (not setInterval) so a slow read/send can never let
+	// the next tick start mid-flight and emit the same track twice.
+	let timer: ReturnType<typeof setTimeout>;
+	const tick = async () => {
+		await poll();
+		timer = setTimeout(tick, intervalMs);
+	};
 	process.on("SIGINT", () => {
-		clearInterval(timer);
+		clearTimeout(timer);
 		console.log("\nStopped.");
 		process.exit(0);
 	});
+	tick();
 }
 
 main();
