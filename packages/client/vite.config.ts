@@ -12,8 +12,9 @@ export default defineConfig({
 			formats: ["es"],
 			fileName: (_, entryName) => `${entryName}.js`,
 		},
-		rollupOptions: {
-			external: ["standardwebhooks", "undici"],
+		rolldownOptions: {
+			// specifiy a regex to externalize everything except @webhook-objects/*
+			external: /^(?!@webhook-objects).*$/,
 		},
 	},
 	test: {
