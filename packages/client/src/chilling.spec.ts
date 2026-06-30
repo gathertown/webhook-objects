@@ -1,15 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { Client } from "./node";
 
-const SECRET = process.env.GATHER_TOWN_WHO_SECRET;
-const OBJECT_URL = process.env.GATHER_TOWN_WHO_URL;
+const SECRET = process.env.GATHER_TOWN_WHO_SECRET ?? "";
+const OBJECT_URL = process.env.GATHER_TOWN_WHO_URL ?? "";
 
-if (!SECRET || !OBJECT_URL) {
-	// note: This may be expected if you're just looking to run unit tests. This ones really an integration test - safe to ignore failures for.
-	throw new Error("GATHER_TOWN_WHO_SECRET and GATHER_TOWN_WHO_URL must be set");
-}
-
-describe("Client", () => {
+// Integration test: hits a live endpoint. Skipped unless both env vars are set,
+// so the unit-test run stays green without them.
+describe.skipIf(!SECRET || !OBJECT_URL)("Client (integration)", () => {
 	it("should request metadata", async () => {
 		const client = new Client({
 			url: OBJECT_URL,

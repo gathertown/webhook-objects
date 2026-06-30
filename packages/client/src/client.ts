@@ -42,6 +42,29 @@ const resolveGlobalFetch = (): FetchImpl => {
 	return globalThis.fetch.bind(globalThis);
 };
 
+/** Collision-resistant default id. Prefers `crypto.randomUUID`, with a fallback. */
+const defaultIdImpl: IdImpl = () => {
+	const unique =
+		typeof globalThis.crypto?.randomUUID === "function"
+			? globalThis.crypto.randomUUID()
+			: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+	return `msg_${unique}`;
+};
+
+/** Normalize any `HeadersInit` (record, entries array, or `Headers`) to a record. */
+const toHeaderRecord = (headers?: HeadersInit): Record<string, string> => {
+	if (!headers) {
+		return {};
+	}
+	if (headers instanceof Headers) {
+		return Object.fromEntries(headers.entries());
+	}
+	if (Array.isArray(headers)) {
+		return Object.fromEntries(headers);
+	}
+	return { ...headers };
+};
+
 /** The response body shape for a given outbound event. */
 type SendResult<E extends WebhookEvent | PingEvent> = E extends PingEvent
 	? PingResponseBody
@@ -58,7 +81,7 @@ export class Client {
 			typeof options.url === "string" ? new URL(options.url) : options.url;
 		this.webhook = new Webhook(options.secret, options.signOptions);
 		this.fetchImpl = options.fetchImpl ?? resolveGlobalFetch();
-		this.idImpl = options.idImpl ?? (() => `msg_${Date.now()}`);
+		this.idImpl = options.idImpl ?? defaultIdImpl;
 	}
 
 	async requestMetadata(): Promise<PingResponseBody> {
@@ -89,7 +112,7 @@ export class Client {
 			method: "POST",
 			body: body,
 			headers: {
-				...init?.headers,
+				...toHeaderRecord(init?.headers),
 				"Content-Type": "application/json",
 				"webhook-id": id,
 				"webhook-timestamp": Math.floor(timestamp.getTime() / 1000).toString(),

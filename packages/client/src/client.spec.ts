@@ -129,8 +129,14 @@ describe("Client.send", () => {
 		const client = new Client({ url: URL_, secret: SECRET, fetchImpl });
 
 		await client.send(EVENT);
+		await client.send(EVENT);
 
-		expect(lastCall(fetchImpl).headers["webhook-id"]).toMatch(/^msg_\d+$/);
+		const ids = fetchImpl.mock.calls.map(
+			([, init]) => (init?.headers as Record<string, string>)["webhook-id"],
+		);
+		expect(ids[0]).toMatch(/^msg_/);
+		expect(ids[1]).toMatch(/^msg_/);
+		expect(ids[0]).not.toBe(ids[1]);
 	});
 
 	it("merges caller-provided RequestInit but forces method and signing headers", async () => {
@@ -153,6 +159,19 @@ describe("Client.send", () => {
 		expect(headers["X-Custom"]).toBe("1");
 		// Client-controlled headers win over caller-supplied ones.
 		expect(headers["webhook-id"]).toBe("msg_real");
+	});
+
+	it("preserves caller headers passed as a Headers instance", async () => {
+		const fetchImpl = mockFetch();
+		const client = new Client({ url: URL_, secret: SECRET, fetchImpl });
+
+		await client.send(EVENT, {
+			headers: new Headers({ "x-custom": "1" }),
+		});
+
+		const { headers } = lastCall(fetchImpl);
+		expect(headers["x-custom"]).toBe("1");
+		expect(headers["webhook-signature"]).toMatch(/^v1,/);
 	});
 
 	it("throws with the status and response cause on a non-OK response", async () => {
