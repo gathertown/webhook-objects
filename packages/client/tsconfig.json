@@ -1,0 +1,11 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {},
+	"include": [],
+	"exclude": [],
+	"references": [
+		{ "path": "./tsconfig.lib.json" },
+		{ "path": "./tsconfig.lib.test.json" },
+		{ "path": "./tsconfig.lib.types.json" }
+	]
+}

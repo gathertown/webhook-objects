@@ -1,0 +1,55 @@
+{
+	"name": "@webhook-objects/client",
+	"version": "0.1.0-beta.1",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"test": "vitest run --coverage",
+		"build": "vite build && tsc -p tsconfig.lib.types.json"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/types/browser.d.ts",
+			"browser": "./dist/browser.js",
+			"node": "./dist/node.js",
+			"default": "./dist/browser.js"
+		},
+		"./browser": {
+			"types": "./dist/types/browser.d.ts",
+			"default": "./dist/browser.js"
+		},
+		"./node": {
+			"types": "./dist/types/node.d.ts",
+			"default": "./dist/node.js"
+		},
+		"./objects": {
+			"types": "./dist/types/objects/index.d.ts",
+			"default": "./dist/objects.js"
+		}
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"standardwebhooks": "^1.0.0"
+	},
+	"peerDependencies": {
+		"undici": ">=8"
+	},
+	"peerDependenciesMeta": {
+		"undici": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@webhook-objects/z-build-config": "workspace:*",
+		"undici": "^8.5.0"
+	}
+}

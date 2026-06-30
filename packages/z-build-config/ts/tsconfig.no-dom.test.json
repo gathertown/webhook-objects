@@ -1,0 +1,6 @@
+{
+	"extends": "./tsconfig.no-dom.json",
+	"compilerOptions": {
+		"types": ["vitest/globals"]
+	}
+}

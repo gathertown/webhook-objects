@@ -2,6 +2,9 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - vite
 gitBranchLockfile: true
+mergeGitBranchLockfilesBranchPattern:
+  - main
+  - release*
 allowBuilds:
   esbuild: true
 packages:
