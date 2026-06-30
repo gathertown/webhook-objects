@@ -21,7 +21,7 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --merge-git-branch-lockfiles
 
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
@@ -34,3 +34,38 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+  merge-lockfiles:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: merge-lockfiles
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Merge branch lockfiles
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            pnpm install --merge-git-branch-lockfiles --lockfile-only
+            git diff --quiet && exit 0
+            git add -A
+            git commit -m "chore: merge branch lockfiles [skip ci]"
+            git push && exit 0
+          done
+          echo "::error::failed to push merged lockfile after 3 attempts" && exit 1
