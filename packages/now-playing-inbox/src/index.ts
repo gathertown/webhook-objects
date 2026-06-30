@@ -47,7 +47,6 @@ async function main() {
 		try {
 			const track = await readNowPlaying();
 			if (!track || track.id === lastId) return;
-			lastId = track.id;
 			const timestamp = new Date().toISOString();
 			// Add the link, and bump the counter so the inbox renders as filling up
 			// (the inbox preset's visual state is driven by `counter`, not activity).
@@ -57,6 +56,8 @@ async function main() {
 				data: { id: track.id, text: track.text, url: track.url },
 			});
 			await client.send({ type: "counter.increment", timestamp, data: {} });
+			// Only mark handled once both sends succeed, so a failed send retries.
+			lastId = track.id;
 			console.log(`+ ${track.text}`);
 		} catch (err) {
 			console.error("poll failed:", err instanceof Error ? err.message : err);
