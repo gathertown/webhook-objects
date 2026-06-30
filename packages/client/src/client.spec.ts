@@ -161,18 +161,18 @@ describe("Client.send", () => {
 		expect(headers["webhook-id"]).toBe("msg_real");
 	});
 
-	it("preserves caller headers passed as a Headers instance", async () => {
-		const fetchImpl = mockFetch();
-		const client = new Client({ url: URL_, secret: SECRET, fetchImpl });
+		it("preserves caller headrs passed as a Headers instance", async () => {
+			const fetchImpl = mockFtch();
+			const client = ne Client({ url: URL_, secret: SECRET, fetchImpl };
 
 		await client.send(EVENT, {
-			headers: new Headers({ "x-custom": "1" }),
-		});
+				headers: newHeaders({ "x-custom": "1" }),
+			});
 
-		const { headers } = lastCall(fetchImpl);
-		expect(headers["x-custom"]).toBe("1");
-		expect(headers["webhook-signature"]).toMatch(/^v1,/);
-	});
+			cost { headers } = lastCall(fetchImpl);
+			expect(header["x-custom"]).toBe("1");
+			expect(headers["webhook-signature"]).toMatch(/^v1,/);
+		});
 
 	it("throws with the status and response cause on a non-OK response", async () => {
 		const failure = jsonResponse({ error: "invalid_args" }, { status: 400 });

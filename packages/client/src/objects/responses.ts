@@ -1,3 +1,10 @@
+/**
+ * Response shapes returned by the object webhook receiver — both the JSON
+ * bodies (`*ResponseBody`) and the full HTTP responses with status codes
+ * (`*Response`).
+ *
+ * @module
+ */
 import type { DeclaredCapabilitiesState, PresetName } from "./presets";
 
 /** Applied via the live game server (space loaded). */
@@ -15,25 +22,42 @@ export type DispatchSuccessResponseBody =
 	| DispatchedResponseBody
 	| SpaceIdleResponseBody;
 
-/** Success for `webhook.ping` only — echoes the object's declared capability state. */
+/**
+ * Success for `webhook.ping` only — echoes the object's declared capability state.
+ *
+ * @typeParam P - The object's preset, or `null` when unknown. When a concrete
+ * preset is supplied, `capabilities` is fully materialized; otherwise it is a
+ * partial map across all presets' capabilities.
+ */
 export type PingResponseBody<P extends PresetName | null = PresetName | null> =
 	{
+		/** Always `"pong"`. */
 		status: "pong";
+		/** The responding object's id. */
 		objectId: string;
+		/** The space the object belongs to. */
 		spaceId: string;
+		/** The object's preset, or `null` if not determinable. */
 		preset: P;
+		/** Declared capability state, materialized per {@link DeclaredCapabilitiesState}. */
 		capabilities: P extends PresetName
 			? DeclaredCapabilitiesState<P>
 			: Partial<DeclaredCapabilitiesState<PresetName>>;
 	};
 
-/** All HTTP-200 JSON bodies, discriminated by `status`. */
+/**
+ * All HTTP-200 JSON bodies, discriminated by `status`.
+ *
+ * @typeParam P - The object's preset (forwarded to {@link PingResponseBody}).
+ */
 export type WebhookSuccessResponseBody<
 	P extends PresetName | null = PresetName | null,
 > = DispatchSuccessResponseBody | PingResponseBody<P>;
 
+/** The success body returned from {@link Client.send} (a dispatched capability event). */
 export type WebhookEventResponseBody = DispatchSuccessResponseBody;
 
+/** Every error code the receiver can return, as a readonly tuple. */
 export const WEBHOOK_ERROR_CODES = [
 	"invalid_request",
 	"invalid_args",
@@ -47,6 +71,7 @@ export const WEBHOOK_ERROR_CODES = [
 	"service_unavailable",
 ] as const;
 
+/** A single error code — the union derived from {@link WEBHOOK_ERROR_CODES}. */
 export type WebhookErrorCode = (typeof WEBHOOK_ERROR_CODES)[number];
 
 /** Every error response body: `{ "error": "<code>" }`. */
@@ -64,6 +89,7 @@ export type PostAuthWebhookErrorCode = Exclude<
 	"not_found" | "unsupported_media_type"
 >;
 
+/** Error responses paired with their HTTP status codes. */
 export type WebhookErrorResponse =
 	| {
 			status: 400;
@@ -95,6 +121,11 @@ export type WebhookRateLimitedResponse = {
 	body?: unknown;
 };
 
+/**
+ * A successful HTTP 200 response (status + body).
+ *
+ * @typeParam P - The object's preset (forwarded to the body type).
+ */
 export type WebhookHttpSuccessResponse<
 	P extends PresetName | null = PresetName | null,
 > = {
@@ -102,7 +133,12 @@ export type WebhookHttpSuccessResponse<
 	body: WebhookSuccessResponseBody<P>;
 };
 
-/** Full HTTP response union for the object webhook receiver. */
+/**
+ * Full HTTP response union for the object webhook receiver — success, error,
+ * or rate-limited.
+ *
+ * @typeParam P - The object's preset (forwarded to the success body type).
+ */
 export type WebhookHttpResponse<
 	P extends PresetName | null = PresetName | null,
 > =
@@ -110,7 +146,11 @@ export type WebhookHttpResponse<
 	| WebhookErrorResponse
 	| WebhookRateLimitedResponse;
 
-/** JSON body only (no HTTP status), success or error. */
+/**
+ * JSON body only (no HTTP status), success or error.
+ *
+ * @typeParam P - The object's preset (forwarded to the success body type).
+ */
 export type WebhookResponseBody<
 	P extends PresetName | null = PresetName | null,
 > = WebhookSuccessResponseBody<P> | WebhookErrorResponseBody;
