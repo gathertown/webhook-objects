@@ -32,7 +32,7 @@ export type WebhookSuccessResponseBody<
 	P extends PresetName | null = PresetName | null,
 > = DispatchSuccessResponseBody | PingResponseBody<P>;
 
-export type WebhookEventResponse = DispatchSuccessResponseBody;
+export type WebhookEventResponseBody = DispatchSuccessResponseBody;
 
 export const WEBHOOK_ERROR_CODES = [
 	"invalid_request",
@@ -114,10 +114,3 @@ export type WebhookHttpResponse<
 export type WebhookResponseBody<
 	P extends PresetName | null = PresetName | null,
 > = WebhookSuccessResponseBody<P> | WebhookErrorResponseBody;
-
-/** @deprecated Use `DispatchSuccessResponseBody`. */
-export type DispatchResponse = DispatchSuccessResponseBody;
-
-/** @deprecated Use `PingResponseBody`. */
-export type PingResponse<P extends PresetName | null = PresetName | null> =
-	PingResponseBody<P>;

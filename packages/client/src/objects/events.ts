@@ -1,5 +1,4 @@
 import type {
-	CapabilityEventFor,
 	CapabilityMethod,
 	CapabilityName,
 	MethodArgs,
@@ -43,6 +42,7 @@ export type PresetWebhookEvent<P extends PresetName> =
 	PresetCapabilityWebhookEvent<P>;
 
 /** Recover the `data` payload type from a wire `type` string. */
-export type EventDataForType<
-	T extends CapabilityEventFor<CapabilityName>["type"],
-> = Extract<CapabilityWebhookEventUnion, { type: T }>["data"];
+export type EventDataForType<T extends WebhookEvent["type"]> = Extract<
+	CapabilityWebhookEventUnion,
+	{ type: T }
+>["data"];

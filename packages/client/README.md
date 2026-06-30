@@ -91,7 +91,7 @@ const client = new Client({ url, secret });
 
 ### `client.send(event, init?)`
 
-Signs and `POST`s a capability event. Returns `Promise<WebhookEventResponse>` (`{ status: "dispatched" }` or `{ status: "space_idle" }`). The optional `init` is a `RequestInit` minus `body`, `method`, and `window` (those are controlled by the client) — use it for custom headers, `signal`, etc.
+Signs and `POST`s a capability event. Returns `Promise<WebhookEventResponseBody>` (`{ status: "dispatched" }` or `{ status: "space_idle" }`). The optional `init` is a `RequestInit` minus `body`, `method`, and `window` (those are controlled by the client) — use it for custom headers, `signal`, etc.
 
 ### `client.requestMetadata()`
 
@@ -137,7 +137,7 @@ All event, capability, preset, and response types are exported from the package 
 
 - `WebhookEvent` — the union of all sendable capability events.
 - `PresetWebhookEvent<P>` — events accepted by an object of preset `P`.
-- `WebhookEventResponse`, `PingResponseBody` — success bodies.
+- `WebhookEventResponseBody`, `PingResponseBody` — success bodies.
 - `WebhookHttpResponse`, `WebhookErrorResponse`, `WebhookErrorCode` — the full receiver response surface.
 
 ## Development

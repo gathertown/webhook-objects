@@ -4,7 +4,7 @@ import {
 	type PingEvent,
 	type PingResponseBody,
 	type WebhookEvent,
-	type WebhookEventResponse,
+	type WebhookEventResponseBody,
 } from "./objects";
 
 export type MutableRequestInit = Omit<
@@ -45,7 +45,7 @@ const resolveGlobalFetch = (): FetchImpl => {
 /** The response body shape for a given outbound event. */
 type SendResult<E extends WebhookEvent | PingEvent> = E extends PingEvent
 	? PingResponseBody
-	: WebhookEventResponse;
+	: WebhookEventResponseBody;
 
 export class Client {
 	private readonly url: URL;
@@ -70,7 +70,7 @@ export class Client {
 	async send(
 		event: WebhookEvent,
 		init?: MutableRequestInit,
-	): Promise<WebhookEventResponse> {
+	): Promise<WebhookEventResponseBody> {
 		return this.sendInternal(event, init);
 	}
 

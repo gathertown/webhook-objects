@@ -111,15 +111,3 @@ export type MethodArgs<
 export type CapabilitiesBlob = {
 	[N in CapabilityName]?: CapabilityState<N>;
 };
-
-export type CapabilityEvent<
-	N extends CapabilityName,
-	M extends CapabilityMethod<N>,
-> = {
-	type: `${N}.${M}`;
-	data: MethodArgs<N, M>;
-};
-
-export type CapabilityEventFor<N extends CapabilityName> = {
-	[M in CapabilityMethod<N>]: CapabilityEvent<N, M>;
-}[CapabilityMethod<N>];
