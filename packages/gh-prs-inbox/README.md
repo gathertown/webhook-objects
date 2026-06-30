@@ -33,4 +33,8 @@ reconciles the feed against them (`activity.add` for newly-pending PRs,
 "PRs pending review" is a *live set* — a PR leaves the list once reviewed or
 merged. Reconciling (rather than clear-and-rewrite) means a failed send only
 desyncs one entry, self-healed on the next poll, instead of emptying the feed.
-The feed is cleared once at startup to drop any stale entries from a prior run.
+The feed and counter are reset once at startup to drop stale state from a prior
+run.
+
+The `activity` feed is a fixed-size ring buffer, so the feed shows the most
+recently-updated PRs up to that size while the counter reports the true total.

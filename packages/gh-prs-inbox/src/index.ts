@@ -15,8 +15,8 @@
  * @module
  */
 import { parseArgs } from "node:util";
-import { Client } from "@webhook-objects/client/node";
-import { fetchPrs, prToEntry } from "./prs";
+import { ACTIVITY_BUFFER_SIZE, Client } from "@webhook-objects/client/node";
+import { feedEntries, fetchPrs } from "./prs";
 
 async function main() {
 	const { values } = parseArgs({
@@ -36,29 +36,27 @@ async function main() {
 	const client = new Client({ url: values.url, secret: values.secret });
 	const intervalMs = Number(values.interval) * 1000;
 
-	// Clear once at startup so a previous run's stale entries don't linger; from
-	// then on we reconcile incrementally and never wipe the feed mid-poll.
-	await client.send({
-		type: "activity.clear",
-		timestamp: new Date().toISOString(),
-		data: {},
-	});
+	// Reset once at startup so a previous run's stale feed/counter don't linger;
+	// from then on we reconcile incrementally and never wipe the feed mid-poll.
+	{
+		const timestamp = new Date().toISOString();
+		await client.send({ type: "activity.clear", timestamp, data: {} });
+		await client.send({ type: "counter.reset", timestamp, data: {} });
+	}
 	// Ids currently shown on the object. Mutated as each send lands so a partial
 	// failure leaves it accurate — the next poll retries only the missing ops.
 	const shownIds = new Set<string>();
 
 	const poll = async () => {
 		try {
-			const entries = (await fetchPrs()).map(prToEntry);
+			const prs = await fetchPrs();
+			// The feed is a ring buffer, so only the most recent entries survive;
+			// cap to its size and let the counter report the true total.
+			const entries = feedEntries(prs, ACTIVITY_BUFFER_SIZE);
 			const currentIds = new Set(entries.map((e) => e.id));
 			const timestamp = new Date().toISOString();
 
-			for (const entry of entries) {
-				if (!shownIds.has(entry.id)) {
-					await client.send({ type: "activity.add", timestamp, data: entry });
-					shownIds.add(entry.id);
-				}
-			}
+			// Remove before add so the ring buffer never evicts a still-shown entry.
 			for (const id of [...shownIds]) {
 				if (!currentIds.has(id)) {
 					await client.send({
@@ -69,13 +67,19 @@ async function main() {
 					shownIds.delete(id);
 				}
 			}
+			for (const entry of entries) {
+				if (!shownIds.has(entry.id)) {
+					await client.send({ type: "activity.add", timestamp, data: entry });
+					shownIds.add(entry.id);
+				}
+			}
 			await client.send({
 				type: "counter.set",
 				timestamp,
-				data: { count: entries.length },
+				data: { count: prs.length },
 			});
 
-			console.log(`synced ${entries.length} PR(s) awaiting review`);
+			console.log(`synced ${prs.length} PR(s) awaiting review`);
 		} catch (err) {
 			console.error("poll failed:", err instanceof Error ? err.message : err);
 		}

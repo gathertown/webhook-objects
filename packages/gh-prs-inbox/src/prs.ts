@@ -14,6 +14,7 @@ export type Pr = {
 	number: number;
 	title: string;
 	url: string;
+	updatedAt: string;
 	repository: { nameWithOwner: string };
 };
 
@@ -26,6 +27,19 @@ export function prToEntry(pr: Pr): Entry {
 	return { id: ref, text: `${ref} — ${pr.title}`, url: pr.url };
 }
 
+/**
+ * The entries to show in the feed: most-recently-updated first, capped to
+ * `limit`. The inbox `activity` feed is a fixed-size ring buffer, so showing
+ * more than it retains would silently evict entries; we cap to its size and let
+ * the counter report the true total.
+ */
+export function feedEntries(prs: Pr[], limit: number): Entry[] {
+	return [...prs]
+		.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+		.slice(0, limit)
+		.map(prToEntry);
+}
+
 /** Ask the `gh` CLI for open PRs that have requested the current user's review. */
 export async function fetchPrs(): Promise<Pr[]> {
 	const { stdout } = await exec("gh", [
@@ -36,7 +50,7 @@ export async function fetchPrs(): Promise<Pr[]> {
 		// gh defaults to 30; raise to the API max so a large queue isn't truncated.
 		"--limit=1000",
 		"--json",
-		"number,title,url,repository",
+		"number,title,url,updatedAt,repository",
 	]);
 	return JSON.parse(stdout) as Pr[];
 }
