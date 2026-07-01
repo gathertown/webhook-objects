@@ -1,5 +1,5 @@
-import type { PollContext } from "./polls/types";
 import type { PollEntry } from "./polls/registry";
+import type { PollContext } from "./polls/types";
 
 /** Run every registered poll once and publish results to Gather. */
 export async function runPollCycle(

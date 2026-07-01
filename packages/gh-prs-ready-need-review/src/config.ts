@@ -52,10 +52,7 @@ export function loadConfig(): Config {
 
 	return {
 		gather: {
-			openPrs: loadGatherWebhook(
-				"GATHER_WEBHOOK_URL",
-				"GATHER_WEBHOOK_SECRET",
-			),
+			openPrs: loadGatherWebhook("GATHER_WEBHOOK_URL", "GATHER_WEBHOOK_SECRET"),
 			reviewRequested: loadGatherWebhook(
 				"GATHER_REVIEW_WEBHOOK_URL",
 				"GATHER_REVIEW_WEBHOOK_SECRET",

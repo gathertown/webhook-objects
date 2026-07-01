@@ -2,8 +2,8 @@ import { expect, test, vi } from "vitest";
 import {
 	cutoffSinceDate,
 	PR_CUTOFF_DAYS,
-	REVIEW_REQUEST_CUTOFF_DAYS,
 	prCreatedSinceDate,
+	REVIEW_REQUEST_CUTOFF_DAYS,
 	reviewRequestSinceDate,
 } from "./client";
 

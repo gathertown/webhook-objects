@@ -1,7 +1,4 @@
-import {
-	listOpenPrsForUser,
-	prCreatedSinceDate,
-} from "../github/client";
+import { listOpenPrsForUser, prCreatedSinceDate } from "../github/client";
 import type { Poll, PollContext, PollResult } from "./types";
 
 /** Count open, ready-for-review PRs you opened or are assigned to. */
