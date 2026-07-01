@@ -11,7 +11,7 @@
 		"start": "tsx --env-file-if-exists=.env src/index.ts",
 		"ping": "tsx --env-file-if-exists=.env src/ping.ts",
 		"reset": "tsx --env-file-if-exists=.env src/reset.ts",
-		"test": "vitest run"
+		"test": "vitest run --coverage"
 	},
 	"licenses": [
 		{
@@ -22,6 +22,7 @@
 		}
 	],
 	"dependencies": {
-		"@webhook-objects/client": "workspace:*"
+		"@webhook-objects/client": "workspace:*",
+		"octokit": "^5.0.5"
 	}
 }

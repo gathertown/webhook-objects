@@ -1,4 +1,4 @@
-const GITHUB_API = "https://api.github.com";
+import { Octokit } from "octokit";
 
 export const PR_CUTOFF_DAYS = 14;
 export const REVIEW_REQUEST_CUTOFF_DAYS = 7;
@@ -9,6 +9,10 @@ export type GitHubPullRequest = {
 	title: string;
 	html_url: string;
 };
+
+function createOctokit(token: string): Octokit {
+	return new Octokit({ auth: token });
+}
 
 export function cutoffSinceDate(days: number): string {
 	const cutoff = new Date();
@@ -26,22 +30,9 @@ export function reviewRequestSinceDate(): string {
 	return cutoffSinceDate(REVIEW_REQUEST_CUTOFF_DAYS);
 }
 
-export function githubHeaders(token: string): Record<string, string> {
-	return {
-		accept: "application/vnd.github+json",
-		authorization: `Bearer ${token}`,
-		"x-github-api-version": "2022-11-28",
-	};
-}
-
 export async function fetchGitHubLogin(token: string): Promise<string> {
-	const res = await fetch(`${GITHUB_API}/user`, {
-		headers: githubHeaders(token),
-	});
-	if (!res.ok) {
-		throw new Error(`GitHub /user failed (${res.status}): ${await res.text()}`);
-	}
-	const user = (await res.json()) as { login?: string };
+	const octokit = createOctokit(token);
+	const { data: user } = await octokit.rest.users.getAuthenticated();
 	if (!user.login) {
 		throw new Error("GitHub /user response missing login");
 	}
@@ -53,18 +44,12 @@ export async function searchIssues(
 	query: string,
 	{ perPage = 100 }: { perPage?: number } = {},
 ): Promise<GitHubPullRequest[]> {
-	const url = new URL("/search/issues", GITHUB_API);
-	url.searchParams.set("q", query);
-	url.searchParams.set("per_page", String(perPage));
-
-	const res = await fetch(url, { headers: githubHeaders(token) });
-	if (!res.ok) {
-		throw new Error(
-			`GitHub search failed (${res.status}): ${await res.text()}`,
-		);
-	}
-	const payload = (await res.json()) as { items?: GitHubPullRequest[] };
-	return payload.items ?? [];
+	const octokit = createOctokit(token);
+	const { data } = await octokit.rest.search.issuesAndPullRequests({
+		q: query,
+		per_page: perPage,
+	});
+	return (data.items ?? []) as GitHubPullRequest[];
 }
 
 /**
