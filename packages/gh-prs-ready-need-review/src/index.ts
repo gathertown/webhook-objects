@@ -34,16 +34,9 @@ console.log(
 	`Starting gh-prs-ready-need-review as @${login} (poll every ${config.pollIntervalMs / 1000}s)`,
 );
 
-let timer: ReturnType<typeof setTimeout>;
 const loop = async () => {
 	await tick();
-	timer = setTimeout(loop, config.pollIntervalMs);
+	setTimeout(loop, config.pollIntervalMs);
 };
-
-process.on("SIGINT", () => {
-	clearTimeout(timer);
-	console.log("\nStopped.");
-	process.exit(0);
-});
 
 loop();
