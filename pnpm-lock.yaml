@@ -83,6 +83,12 @@ importers:
         specifier: workspace:*
         version: link:../client
 
+  packages/steven-gh-in-out:
+    dependencies:
+      '@webhook-objects/client':
+        specifier: workspace:*
+        version: link:../client
+
   packages/z-build-config: {}
 
 packages:

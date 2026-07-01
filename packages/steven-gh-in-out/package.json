@@ -1,21 +1,27 @@
 {
-  "name": "gather-bot",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "description": "Gather bot",
-  "engines": {
-    "node": ">=20",
-    "pnpm": ">=10.16.0"
-  },
-  "packageManager": "pnpm@10.16.0",
-  "scripts": {
-    "prepare": "corepack enable",
-    "start": "node --env-file=.env src/index.js",
-    "ping": "node --env-file=.env src/ping.js",
-    "reset": "node --env-file=.env src/reset.js"
-  },
-  "dependencies": {
-    "standardwebhooks": "^1.0.0"
-  }
+	"name": "@webhook-objects/steven-gh-in-out",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Poll GitHub PR metrics and mirror counts to Gather Smart Object counters",
+	"bin": {
+		"steven-gh-in-out": "src/index.ts"
+	},
+	"scripts": {
+		"start": "tsx --env-file-if-exists=.env src/index.ts",
+		"ping": "tsx --env-file-if-exists=.env src/ping.ts",
+		"reset": "tsx --env-file-if-exists=.env src/reset.ts",
+		"test": "vitest run"
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"@webhook-objects/client": "workspace:*"
+	}
 }
