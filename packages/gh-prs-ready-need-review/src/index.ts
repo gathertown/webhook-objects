@@ -31,7 +31,7 @@ async function tick() {
 }
 
 console.log(
-	`Starting steven-gh-in-out as @${login} (poll every ${config.pollIntervalMs / 1000}s)`,
+	`Starting gh-prs-ready-need-review as @${login} (poll every ${config.pollIntervalMs / 1000}s)`,
 );
 
 let timer: ReturnType<typeof setTimeout>;

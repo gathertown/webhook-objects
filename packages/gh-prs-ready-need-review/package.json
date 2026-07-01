@@ -1,11 +1,11 @@
 {
-	"name": "@webhook-objects/steven-gh-in-out",
+	"name": "@webhook-objects/gh-prs-ready-need-review",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
 	"description": "Poll GitHub PR metrics and mirror counts to Gather Smart Object counters",
 	"bin": {
-		"steven-gh-in-out": "src/index.ts"
+		"gh-prs-ready-need-review": "src/index.ts"
 	},
 	"scripts": {
 		"start": "tsx --env-file-if-exists=.env src/index.ts",

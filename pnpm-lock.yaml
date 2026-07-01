@@ -71,6 +71,12 @@ importers:
         specifier: workspace:*
         version: link:../client
 
+  packages/gh-prs-ready-need-review:
+    dependencies:
+      '@webhook-objects/client':
+        specifier: workspace:*
+        version: link:../client
+
   packages/low-battery-switch:
     dependencies:
       '@webhook-objects/client':
@@ -78,12 +84,6 @@ importers:
         version: link:../client
 
   packages/now-playing-inbox:
-    dependencies:
-      '@webhook-objects/client':
-        specifier: workspace:*
-        version: link:../client
-
-  packages/steven-gh-in-out:
     dependencies:
       '@webhook-objects/client':
         specifier: workspace:*

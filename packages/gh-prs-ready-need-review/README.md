@@ -1,7 +1,6 @@
-# @webhook-objects/steven-gh-in-out
+# @webhook-objects/gh-prs-ready-need-review
 
-Polls GitHub for two PR metrics and mirrors each count to a Gather Smart Object
-`counter`:
+Polls GitHub for two PR metrics and mirrors each count to a Gather Smart Object `counter`:
 
 1. Open, ready-for-review PRs you authored or are assigned to (last 14 days)
 2. Open PRs that directly named you as reviewer, not yet approved (last 7 days)
@@ -12,7 +11,7 @@ Uses the GitHub REST search API (not the `gh` CLI). Configure via `.env` — see
 ## Setup
 
 ```sh
-cp packages/steven-gh-in-out/.env.example packages/steven-gh-in-out/.env
+cp packages/gh-prs-ready-need-review/.env.example packages/gh-prs-ready-need-review/.env
 # fill in GITHUB_TOKEN, GITHUB_REPO, and both Gather webhook URL/secret pairs
 pnpm install --merge-git-branch-lockfiles
 ```
@@ -21,13 +20,13 @@ pnpm install --merge-git-branch-lockfiles
 
 ```sh
 # probe both Smart Objects (webhook.ping)
-pnpm --filter @webhook-objects/steven-gh-in-out ping
+pnpm --filter @webhook-objects/gh-prs-ready-need-review ping
 
 # clear legacy activity slots and reset counters (one-time migration)
-pnpm --filter @webhook-objects/steven-gh-in-out reset
+pnpm --filter @webhook-objects/gh-prs-ready-need-review reset
 
 # poll GitHub and push counter.set to both objects (runs until Ctrl+C)
-pnpm --filter @webhook-objects/steven-gh-in-out start
+pnpm --filter @webhook-objects/gh-prs-ready-need-review start
 ```
 
 | env var | required | default | meaning |
