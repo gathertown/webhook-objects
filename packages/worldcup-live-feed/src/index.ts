@@ -16,12 +16,12 @@
 import { parseArgs } from "node:util";
 import { Client } from "@webhook-objects/client/node";
 import {
+	goalEntryText,
 	IDLE_DISPLAY_NAME,
 	IDLE_ENTRY_ID,
-	NO_MATCHES_TEXT,
-	goalEntryText,
 	liveDisplayName,
 	matchEntryText,
+	NO_MATCHES_TEXT,
 	nextMatchEntryText,
 	resultEntryText,
 } from "./entries";
@@ -259,7 +259,9 @@ async function main() {
 		}
 	};
 
-	console.log(`Watching World Cup matches every ${values.interval}s. Ctrl+C to stop.`);
+	console.log(
+		`Watching World Cup matches every ${values.interval}s. Ctrl+C to stop.`,
+	);
 	// Self-scheduling loop (not setInterval) so a slow poll can never let the
 	// next tick start mid-flight.
 	let timer: ReturnType<typeof setTimeout>;

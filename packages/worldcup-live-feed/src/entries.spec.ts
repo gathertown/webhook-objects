@@ -1,5 +1,4 @@
 import { expect, test } from "vitest";
-import type { Match } from "./football-data";
 import {
 	countdownText,
 	goalEntryText,
@@ -8,6 +7,7 @@ import {
 	nextMatchEntryText,
 	resultEntryText,
 } from "./entries";
+import type { Match } from "./football-data";
 
 function match(overrides: Partial<Match> = {}): Match {
 	return {
@@ -52,7 +52,10 @@ test("liveDisplayName uses team codes for a single match", () => {
 test("liveDisplayName falls back to shortName/name when no tla", () => {
 	expect(
 		liveDisplayName([
-			match({ homeTeam: { name: "United States" }, awayTeam: { name: "Bosnia-Herzegovina" } }),
+			match({
+				homeTeam: { name: "United States" },
+				awayTeam: { name: "Bosnia-Herzegovina" },
+			}),
 		]),
 	).toBe("worldcup.town - ⚽ United States 2-0 Bosnia-Herzegovina");
 });
@@ -80,7 +83,7 @@ test("countdownText reports starting soon once the kickoff has passed", () => {
 
 test("nextMatchEntryText combines team names and the countdown", () => {
 	const now = new Date("2026-07-02T18:00:00Z").getTime();
-	expect(nextMatchEntryText(match({ utcDate: "2026-07-02T19:00:00Z" }), now)).toBe(
-		"⏰ Next: ⚽ Spain vs Austria — in 1h 0m",
-	);
+	expect(
+		nextMatchEntryText(match({ utcDate: "2026-07-02T19:00:00Z" }), now),
+	).toBe("⏰ Next: ⚽ Spain vs Austria — in 1h 0m");
 });
