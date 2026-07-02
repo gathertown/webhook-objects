@@ -193,16 +193,19 @@ async function main() {
 				const awayGoals = match.score.fullTime.away ?? 0;
 				const prev = lastMatchState.get(match.id);
 				if (prev) {
-					if (homeGoals > prev.home) {
+					// Both teams can score, or one team can score twice, between
+					// polls — emit one entry per goal keyed on that side's new tally.
+					for (let n = prev.home + 1; n <= homeGoals; n++) {
 						scoredAny = true;
 						await dispatchActivity(
-							`goal-${match.id}-${homeGoals + awayGoals}`,
+							`goal-${match.id}-home-${n}`,
 							goalEntryText(match, "home"),
 						);
-					} else if (awayGoals > prev.away) {
+					}
+					for (let n = prev.away + 1; n <= awayGoals; n++) {
 						scoredAny = true;
 						await dispatchActivity(
-							`goal-${match.id}-${homeGoals + awayGoals}`,
+							`goal-${match.id}-away-${n}`,
 							goalEntryText(match, "away"),
 						);
 					}
@@ -232,6 +235,9 @@ async function main() {
 					data: { state: "alert" },
 				});
 				setTimeout(() => {
+					// If the match ended during the alert window we're now idle
+					// (`working`); don't clobber that back to `on`.
+					if (!wasLive) return;
 					client
 						.send({
 							type: "status.set",
