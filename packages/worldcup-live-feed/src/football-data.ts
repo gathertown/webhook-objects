@@ -55,10 +55,23 @@ async function footballDataFetch(
 const byUtcDateAsc = (a: Match, b: Match) =>
 	new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime();
 
-/** Currently in-progress World Cup matches (`LIVE`/`IN_PLAY`/`PAUSED`). */
-export async function fetchLiveMatches(apiToken: string): Promise<Match[]> {
+/**
+ * Currently in-progress World Cup matches (`LIVE`/`IN_PLAY`/`PAUSED`).
+ *
+ * football-data.org's match `status` field never actually takes the value
+ * `"LIVE"` (real values are `IN_PLAY`/`PAUSED`/`FINISHED`/etc) — that's only
+ * a filter shorthand on the cross-competition `/v4/matches` endpoint, not on
+ * `/v4/competitions/{id}/matches`. Querying `?status=LIVE` here server-side
+ * filters out real in-progress matches, so we fetch today's matches
+ * unfiltered and do the live check ourselves.
+ */
+export async function fetchLiveMatches(
+	apiToken: string,
+	now = Date.now(),
+): Promise<Match[]> {
+	const today = new Date(now).toISOString().slice(0, 10);
 	const json = await footballDataFetch(
-		"/competitions/WC/matches?status=LIVE",
+		`/competitions/WC/matches?dateFrom=${today}&dateTo=${today}`,
 		apiToken,
 	);
 	return json.matches.filter((m: Match) => LIVE_STATUSES.has(m.status));
