@@ -1,9 +1,8 @@
 # @webhook-objects/now-playing-inbox
 
-macOS-only PoC. Watches what's playing (Spotify, then Music) and posts each new
-track to an `inbox` webhook object's activity feed.
+Watches your system for playing music (via Spotify, Applie Music), posting any new tracks to an `inbox` webhook object.
 
-<img src="./docs/preview.png" alt="An inbox webhook object showing recently played songs" width="312" />
+macOS only — Uses Apple Script to parse music application state.
 
 ## Usage
 

@@ -1,8 +1,6 @@
 # @webhook-objects/low-battery-switch
 
-PoC. Polls macOS power state and mirrors "running low" into a `switch` webhook
-object — on when you're on battery at/below a threshold, off otherwise. A shared
-"might drop off the call" light for the space.
+Updates a `switch` webhook object based on the current macOS power state. Turned on when your battery is running low.
 
 macOS only — reads power via the built-in `pmset` (no extra deps).
 

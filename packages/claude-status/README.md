@@ -1,9 +1,10 @@
 # @webhook-objects/claude-status
 
-PoC. Mirrors a Claude Code session's live status into a `status` webhook object,
-driven by Claude's own hooks (no polling).
+Mirrors a Claude Code session's live status into a `status` webhook object, driven by Claude Hooks.
 
 ## Usage
+
+> Note: This example has a unique installation flow, due to challenges with `PATH` when running from within Claude. As a result, we don't use `tsx` to run this.
 
 ```sh
 pnpm --filter @webhook-objects/claude-status build

@@ -1,8 +1,6 @@
 # @webhook-objects/gh-prs-inbox
 
-PoC. Polls GitHub for PRs awaiting your review and mirrors them into an `inbox`
-webhook object — one activity entry per PR, plus a counter of how many are
-waiting.
+Uses the GitHub CLI to poll for PRs awaiting your review, mirroring them to an `inbox` webhook object.
 
 Requires the [`gh`](https://cli.github.com) CLI, authenticated (`gh auth login`).
 
