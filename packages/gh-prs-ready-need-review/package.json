@@ -1,0 +1,28 @@
+{
+	"name": "@webhook-objects/gh-prs-ready-need-review",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Poll GitHub PR metrics and mirror counts to Gather Smart Object counters",
+	"bin": {
+		"gh-prs-ready-need-review": "src/index.ts"
+	},
+	"scripts": {
+		"start": "tsx --env-file-if-exists=.env src/index.ts",
+		"ping": "tsx --env-file-if-exists=.env src/ping.ts",
+		"reset": "tsx --env-file-if-exists=.env src/reset.ts",
+		"test": "vitest run --coverage"
+	},
+	"licenses": [
+		{
+			"type": "Apache-2.0"
+		},
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"@webhook-objects/client": "workspace:*",
+		"octokit": "^5.0.5"
+	}
+}
