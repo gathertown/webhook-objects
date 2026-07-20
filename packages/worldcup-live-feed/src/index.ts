@@ -14,7 +14,7 @@
  * @module
  */
 import { parseArgs } from "node:util";
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import {
 	goalEntryText,
 	IDLE_DISPLAY_NAME,
@@ -70,10 +70,13 @@ async function main() {
 	}
 	const alertMs = Number(values["alert-seconds"]) * 1000;
 
-	const client = new Client({ url: values.url, secret: values.secret });
+	const client = createWebhookObjectClient({
+		url: values.url,
+		secret: values.secret,
+	});
 
 	console.log("pinging object...");
-	const ping = await client.requestMetadata();
+	const ping = await client.ping();
 	if (ping.preset !== "status") {
 		console.error(`Expected a "status" preset object, got "${ping.preset}".`);
 		process.exit(1);
@@ -83,25 +86,22 @@ async function main() {
 	// re-dispatch unchanged entries: "at" (the feed's sort key) is server-stamped
 	// from dispatch time, so a needless re-dispatch bumps an entry out of its
 	// true chronological place relative to genuinely newer ones.
+	// The SDK leaves ping capabilities untyped (Record<string, unknown>), so
+	// narrow the one slice we read.
+	const activityState = ping.capabilities.activity as
+		| { entries?: { id: string; text: string }[] }
+		| undefined;
 	const knownEntryText = new Map(
-		(ping.capabilities.activity?.entries ?? []).map((e) => [e.id, e.text]),
+		(activityState?.entries ?? []).map((e) => [e.id, e.text]),
 	);
 	const dispatchActivity = async (id: string, text: string) => {
 		if (knownEntryText.get(id) === text) return;
-		await client.send({
-			type: "activity.add",
-			timestamp: new Date().toISOString(),
-			data: { id, text },
-		});
+		await client.send("activity.add", { id, text });
 		knownEntryText.set(id, text);
 	};
 	const removeActivity = async (id: string) => {
 		try {
-			await client.send({
-				type: "activity.remove",
-				timestamp: new Date().toISOString(),
-				data: { id },
-			});
+			await client.send("activity.remove", { id });
 			knownEntryText.delete(id);
 		} catch {
 			// already gone — fine
@@ -164,16 +164,8 @@ async function main() {
 			if (!live) {
 				if (wasLive !== false) {
 					console.log("no live matches -> showing idle message");
-					await client.send({
-						type: "status.set",
-						timestamp: new Date().toISOString(),
-						data: { state: "working" },
-					});
-					await client.send({
-						type: "info.set",
-						timestamp: new Date().toISOString(),
-						data: { name: IDLE_DISPLAY_NAME },
-					});
+					await client.send("status.set", { state: "working" });
+					await client.send("info.set", { name: IDLE_DISPLAY_NAME });
 				}
 				const nextMatch = await getNextMatch();
 				const idleText = nextMatch
@@ -222,40 +214,22 @@ async function main() {
 			}
 
 			if (!wasLive) {
-				await client.send({
-					type: "status.set",
-					timestamp: new Date().toISOString(),
-					data: { state: "on" },
-				});
+				await client.send("status.set", { state: "on" });
 			}
 			if (scoredAny) {
-				await client.send({
-					type: "status.set",
-					timestamp: new Date().toISOString(),
-					data: { state: "alert" },
-				});
+				await client.send("status.set", { state: "alert" });
 				setTimeout(() => {
 					// If the match ended during the alert window we're now idle
 					// (`working`); don't clobber that back to `on`.
 					if (!wasLive) return;
-					client
-						.send({
-							type: "status.set",
-							timestamp: new Date().toISOString(),
-							data: { state: "on" },
-						})
-						.catch(() => {});
+					client.send("status.set", { state: "on" }).catch(() => {});
 				}, alertMs);
 			}
 
 			const displayName = liveDisplayName(liveMatches);
 			if (displayName !== lastDisplayName) {
 				console.log(`updating display name -> ${displayName}`);
-				await client.send({
-					type: "info.set",
-					timestamp: new Date().toISOString(),
-					data: { name: displayName },
-				});
+				await client.send("info.set", { name: displayName });
 			}
 
 			wasLive = true;
