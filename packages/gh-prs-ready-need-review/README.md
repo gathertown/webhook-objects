@@ -39,4 +39,4 @@ pnpm --filter @webhook-objects/gh-prs-ready-need-review start
 | `GATHER_REVIEW_WEBHOOK_SECRET` | yes | — | `whsec_…` for that object |
 | `POLL_INTERVAL_MS` | no | `600000` | poll interval (min 10000) |
 
-Events are signed and sent via `@webhook-objects/client`.
+Events are signed and sent via [`@gathertown/webhook-object-sdk`](https://www.npmjs.com/package/@gathertown/webhook-object-sdk).

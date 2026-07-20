@@ -1,4 +1,4 @@
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { loadConfig } from "./config";
 
 const config = loadConfig();
@@ -12,8 +12,8 @@ const targets = [
 ];
 
 for (const { name, url, secret } of targets) {
-	const client = new Client({ url, secret });
-	const result = await client.requestMetadata();
+	const client = createWebhookObjectClient({ url, secret });
+	const result = await client.ping();
 	console.log(`\n${name}:`);
 	console.log(JSON.stringify(result, null, 2));
 }

@@ -6,7 +6,7 @@
  *
  * @module
  */
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { loadConfig } from "./config";
 import { fetchGitHubLogin } from "./github/client";
 import { createPollEntries } from "./polls/registry";
@@ -15,8 +15,8 @@ import { runPollCycle } from "./runner";
 const config = loadConfig();
 
 const pollEntries = createPollEntries({
-	openPrs: new Client(config.gather.openPrs),
-	reviewRequested: new Client(config.gather.reviewRequested),
+	openPrs: createWebhookObjectClient(config.gather.openPrs),
+	reviewRequested: createWebhookObjectClient(config.gather.reviewRequested),
 });
 
 const login = await fetchGitHubLogin(config.github.token);

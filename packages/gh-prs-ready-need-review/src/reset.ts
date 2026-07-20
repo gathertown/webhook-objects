@@ -1,4 +1,4 @@
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { loadConfig } from "./config";
 
 /** Activity slot ids from the pre-counter inbox publisher. */
@@ -27,18 +27,13 @@ const targets = [
 ];
 
 for (const { name, url, secret } of targets) {
-	const client = new Client({ url, secret });
-	const timestamp = new Date().toISOString();
+	const client = createWebhookObjectClient({ url, secret });
 
 	for (const id of LEGACY_ACTIVITY_SLOT_IDS) {
-		await client.send({ type: "activity.remove", timestamp, data: { id } });
+		await client.send("activity.remove", { id });
 	}
 
-	const result = await client.send({
-		type: "counter.reset",
-		timestamp,
-		data: {},
-	});
+	const result = await client.send("counter.reset");
 	console.log(
 		`${name}: cleared ${LEGACY_ACTIVITY_SLOT_IDS.length} legacy slots + counter (${JSON.stringify(result)})`,
 	);

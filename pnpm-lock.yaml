@@ -73,9 +73,9 @@ importers:
 
   packages/gh-prs-ready-need-review:
     dependencies:
-      '@webhook-objects/client':
-        specifier: workspace:*
-        version: link:../client
+      '@gathertown/webhook-object-sdk':
+        specifier: ^0.1.1
+        version: 0.1.1
       octokit:
         specifier: ^5.0.5
         version: 5.0.5
@@ -341,6 +341,13 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@gathertown/webhook-object-sdk@0.1.1':
+    resolution: {integrity: sha512-lKy/S8bA1Ux0+RAlQAEn6K5FCmQrdIF3QwE+31OBPUAsOqdFeUbb9xvrSuyus2+nqL/JOIQU3QFcFXuHxDLoiA==}
+    engines: {node: '>=18'}
+
+  '@gathertown/webhook-object-types@0.1.1':
+    resolution: {integrity: sha512-jJBooZyBW/lRHwY7njRWjr2y1oaZEWBW719sZElV3ipv2a0EymR/AZZtW8jJrkVWP+OhuVSb7EUHVEE0dMb9mA==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -1232,6 +1239,13 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.1':
     optional: true
+
+  '@gathertown/webhook-object-sdk@0.1.1':
+    dependencies:
+      '@gathertown/webhook-object-types': 0.1.1
+      standardwebhooks: 1.0.0
+
+  '@gathertown/webhook-object-types@0.1.1': {}
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
