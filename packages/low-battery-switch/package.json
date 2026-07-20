@@ -19,6 +19,6 @@
 		}
 	],
 	"dependencies": {
-		"@webhook-objects/client": "workspace:*"
+		"@gathertown/webhook-object-sdk": "^0.1.1"
 	}
 }

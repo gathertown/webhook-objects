@@ -8,7 +8,7 @@
  * @module
  */
 import { parseArgs } from "node:util";
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { readNowPlaying } from "./now-playing";
 
 async function main() {
@@ -32,14 +32,16 @@ async function main() {
 		process.exit(1);
 	}
 
-	const client = new Client({ url: values.url, secret: values.secret });
+	const client = createWebhookObjectClient({
+		url: values.url,
+		secret: values.secret,
+	});
 	const intervalMs = Number(values.interval) * 1000;
 	let lastId: string | undefined;
 
 	if (values.initialize) {
-		const timestamp = new Date().toISOString();
-		await client.send({ type: "activity.clear", timestamp, data: {} });
-		await client.send({ type: "counter.reset", timestamp, data: {} });
+		await client.send("activity.clear");
+		await client.send("counter.reset");
 		console.log("Initialized: cleared activity feed and reset counter.");
 	}
 
@@ -47,19 +49,15 @@ async function main() {
 		try {
 			const track = await readNowPlaying();
 			if (!track || track.id === lastId) return;
-			const timestamp = new Date().toISOString();
-			await client.send({
-				type: "activity.add",
-				timestamp,
-				data: { id: track.id, text: track.text, url: track.url },
+			await client.send("activity.add", {
+				id: track.id,
+				text: track.text,
+				url: track.url,
 			});
 			// Mark handled as soon as the entry is recorded: a later failure must
 			// not re-add this track (which would duplicate the feed entry).
 			lastId = track.id;
 			console.log(`+ ${track.text}`);
-			// Best-effort counter bump so the inbox renders as filling up; if it
-			// fails the feed is still correct (the counter may just lag by one).
-			await client.send({ type: "counter.increment", timestamp, data: {} });
 		} catch (err) {
 			console.error("poll failed:", err instanceof Error ? err.message : err);
 		}

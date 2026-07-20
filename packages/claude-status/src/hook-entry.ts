@@ -11,7 +11,7 @@
  *
  * @module
  */
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { eventToState } from "./hook";
 
 const SEND_TIMEOUT_MS = 3000;
@@ -40,20 +40,14 @@ const secret = flag("secret");
 
 if (state && url && secret) {
 	try {
-		// Use the global fetch (Node 18+) so undici is never imported.
-		const client = new Client({
+		// The timeout signal covers the whole send, retries and backoff included,
+		// so a down/slow receiver can never hold the hook process open.
+		const client = createWebhookObjectClient({
 			url,
 			secret,
-			fetchImpl: (input, init) => fetch(input, init),
+			signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
 		});
-		await client.send(
-			{
-				type: "status.set",
-				timestamp: new Date().toISOString(),
-				data: { state },
-			},
-			{ signal: AbortSignal.timeout(SEND_TIMEOUT_MS) },
-		);
+		await client.send("status.set", { state });
 	} catch {
 		// Best effort only.
 	}

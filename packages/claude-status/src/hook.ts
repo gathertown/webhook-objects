@@ -12,7 +12,7 @@
  *
  * @module
  */
-import type { StatusState } from "@webhook-objects/client/node";
+import type { StatusSetDataState as StatusState } from "@gathertown/webhook-object-types";
 
 /** The hook events we register, in `settings.json` order. */
 export const HOOK_EVENTS = [

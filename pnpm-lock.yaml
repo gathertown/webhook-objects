@@ -14,18 +14,9 @@ importers:
       '@types/node':
         specifier: ^26.0.0
         version: 26.0.0
-      '@vitest/browser':
-        specifier: ^4.1.9
-        version: 4.1.9(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(tsx@4.22.4))(vitest@4.1.9)
-      '@vitest/browser-playwright':
-        specifier: ^4.1.9
-        version: 4.1.9(playwright@1.61.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(tsx@4.22.4))(vitest@4.1.9)
       '@vitest/coverage-v8':
         specifier: 4.1.9
         version: 4.1.9(@vitest/browser@4.1.9)(vitest@4.1.9)
-      playwright:
-        specifier: ^1.61.0
-        version: 1.61.0
       tsx:
         specifier: ^4.22
         version: 4.22.4
@@ -44,44 +35,34 @@ importers:
 
   packages/claude-status:
     dependencies:
-      '@webhook-objects/client':
-        specifier: workspace:*
-        version: link:../client
+      '@gathertown/webhook-object-sdk':
+        specifier: ^0.1.1
+        version: 0.1.1
     devDependencies:
+      '@gathertown/webhook-object-types':
+        specifier: ^0.1.1
+        version: 0.1.1
       '@webhook-objects/z-build-config':
         specifier: workspace:*
         version: link:../z-build-config
-
-  packages/client:
-    dependencies:
-      standardwebhooks:
-        specifier: ^1.0.0
-        version: 1.0.0
-    devDependencies:
-      '@webhook-objects/z-build-config':
-        specifier: workspace:*
-        version: link:../z-build-config
-      undici:
-        specifier: ^8.5.0
-        version: 8.5.0
 
   packages/gh-prs-inbox:
     dependencies:
-      '@webhook-objects/client':
-        specifier: workspace:*
-        version: link:../client
+      '@gathertown/webhook-object-sdk':
+        specifier: ^0.1.1
+        version: 0.1.1
 
   packages/low-battery-switch:
     dependencies:
-      '@webhook-objects/client':
-        specifier: workspace:*
-        version: link:../client
+      '@gathertown/webhook-object-sdk':
+        specifier: ^0.1.1
+        version: 0.1.1
 
   packages/now-playing-inbox:
     dependencies:
-      '@webhook-objects/client':
-        specifier: workspace:*
-        version: link:../client
+      '@gathertown/webhook-object-sdk':
+        specifier: ^0.1.1
+        version: 0.1.1
 
   packages/z-build-config: {}
 
@@ -332,6 +313,13 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@gathertown/webhook-object-sdk@0.1.1':
+    resolution: {integrity: sha512-lKy/S8bA1Ux0+RAlQAEn6K5FCmQrdIF3QwE+31OBPUAsOqdFeUbb9xvrSuyus2+nqL/JOIQU3QFcFXuHxDLoiA==}
+    engines: {node: '>=18'}
+
+  '@gathertown/webhook-object-types@0.1.1':
+    resolution: {integrity: sha512-jJBooZyBW/lRHwY7njRWjr2y1oaZEWBW719sZElV3ipv2a0EymR/AZZtW8jJrkVWP+OhuVSb7EUHVEE0dMb9mA==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -825,10 +813,6 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@8.5.0:
-    resolution: {integrity: sha512-xamtWoB1EshgjpmlXd7GGm2VfdDtw1+rD8uhry8pSNW3If6S8E0m2T2+orSKeZXEn/aPJMviCpDBA65WJt8zhg==}
-    engines: {node: '>=22.19.0'}
-
   vite-plugin-node@8.0.0:
     resolution: {integrity: sha512-/jz+hrOULqRfsOwSrA3xU0rm2ED/XLsUkQU3VhuJqaR/gvyGxb0ZRxsamh/U84DCpvIEhYkp2ZwgyDVQ+AmIRQ==}
     peerDependencies:
@@ -991,7 +975,8 @@ snapshots:
   '@biomejs/cli-win32-x64@2.5.0':
     optional: true
 
-  '@blazediff/core@1.9.1': {}
+  '@blazediff/core@1.9.1':
+    optional: true
 
   '@emnapi/core@1.11.1':
     dependencies:
@@ -1087,6 +1072,13 @@ snapshots:
   '@esbuild/win32-x64@0.28.1':
     optional: true
 
+  '@gathertown/webhook-object-sdk@0.1.1':
+    dependencies:
+      '@gathertown/webhook-object-types': 0.1.1
+      standardwebhooks: 1.0.0
+
+  '@gathertown/webhook-object-types@0.1.1': {}
+
   '@jridgewell/resolve-uri@3.1.2': {}
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
@@ -1105,7 +1097,8 @@ snapshots:
 
   '@oxc-project/types@0.137.0': {}
 
-  '@polka/url@1.0.0-next.29': {}
+  '@polka/url@1.0.0-next.29':
+    optional: true
 
   '@rolldown/binding-android-arm64@1.1.2':
     optional: true
@@ -1192,6 +1185,7 @@ snapshots:
       - msw
       - utf-8-validate
       - vite
+    optional: true
 
   '@vitest/browser@4.1.9(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(tsx@4.22.4))(vitest@4.1.9)':
     dependencies:
@@ -1209,6 +1203,7 @@ snapshots:
       - msw
       - utf-8-validate
       - vite
+    optional: true
 
   '@vitest/coverage-v8@4.1.9(@vitest/browser@4.1.9)(vitest@4.1.9)':
     dependencies:
@@ -1433,7 +1428,8 @@ snapshots:
     dependencies:
       semver: 7.8.5
 
-  mrmime@2.0.1: {}
+  mrmime@2.0.1:
+    optional: true
 
   ms@2.1.3: {}
 
@@ -1447,15 +1443,18 @@ snapshots:
 
   picomatch@4.0.4: {}
 
-  playwright-core@1.61.0: {}
+  playwright-core@1.61.0:
+    optional: true
 
   playwright@1.61.0:
     dependencies:
       playwright-core: 1.61.0
     optionalDependencies:
       fsevents: 2.3.2
+    optional: true
 
-  pngjs@7.0.0: {}
+  pngjs@7.0.0:
+    optional: true
 
   postcss@8.5.15:
     dependencies:
@@ -1493,6 +1492,7 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
+    optional: true
 
   source-map-js@1.2.1: {}
 
@@ -1520,7 +1520,8 @@ snapshots:
 
   tinyrainbow@3.1.0: {}
 
-  totalist@3.0.1: {}
+  totalist@3.0.1:
+    optional: true
 
   tslib@2.8.1:
     optional: true
@@ -1534,8 +1535,6 @@ snapshots:
   typescript@6.0.3: {}
 
   undici-types@8.3.0: {}
-
-  undici@8.5.0: {}
 
   vite-plugin-node@8.0.0(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(tsx@4.22.4)):
     dependencies:
@@ -1593,4 +1592,5 @@ snapshots:
       siginfo: 2.0.0
       stackback: 0.0.2
 
-  ws@8.21.0: {}
+  ws@8.21.0:
+    optional: true

@@ -27,7 +27,7 @@ Runs until `Ctrl+C`.
 
 `pmset -g batt` reports charge percent and whether you're on AC → each poll
 decides "low" (on battery AND at/below `--threshold`) and, only when that
-changes, sends `switch.set_state` signed via `@webhook-objects/client`. Plugged
+changes, sends `switch.set_state` signed via [`@gathertown/webhook-object-sdk`](https://www.npmjs.com/package/@gathertown/webhook-object-sdk). Plugged
 in is never low, however empty — you're not about to drop.
 
 Sending only on change keeps the receiver quiet between transitions; a failed

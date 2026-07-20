@@ -26,7 +26,7 @@ Runs until `Ctrl+C`.
 `gh search prs --review-requested=@me --state=open` lists the PRs → each poll
 reconciles the feed against them (`activity.add` for newly-pending PRs,
 `activity.remove` for ones now gone, then `counter.set`) and signs & POSTs via
-`@webhook-objects/client`.
+[`@gathertown/webhook-object-sdk`](https://www.npmjs.com/package/@gathertown/webhook-object-sdk).
 
 "PRs pending review" is a *live set* — a PR leaves the list once reviewed or
 merged. Reconciling (rather than clear-and-rewrite) means a failed send only

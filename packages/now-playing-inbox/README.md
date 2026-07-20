@@ -27,4 +27,4 @@ Music search.
 ## How it works
 
 `osascript` reads the current track → dedup against the last id → sign & POST
-via `@webhook-objects/client`.
+via [`@gathertown/webhook-object-sdk`](https://www.npmjs.com/package/@gathertown/webhook-object-sdk).
