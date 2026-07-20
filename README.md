@@ -21,4 +21,4 @@ Further - While PRs are welcome, they're reviewed on a best-effort basis. If you
 
 ## License
 
-This project is dual licensed under MIT and Apache 2.0.
+This project is dual licensed under [MIT](./LICENSE-MIT) and [Apache 2.0](./LICENSE-APACHE), at your option.
