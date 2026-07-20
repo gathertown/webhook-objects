@@ -23,9 +23,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --merge-git-branch-lockfiles
 
-      - name: Install Playwright Chromium
-        run: pnpm exec playwright install --with-deps chromium
-
       - name: Lint
         run: pnpm lint
 

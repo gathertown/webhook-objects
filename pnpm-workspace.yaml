@@ -1,6 +1,8 @@
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - vite
+  - "@gathertown/webhook-object-sdk"
+  - "@gathertown/webhook-object-types"
 gitBranchLockfile: true
 enableGlobalVirtualStore: true
 mergeGitBranchLockfilesBranchPattern:

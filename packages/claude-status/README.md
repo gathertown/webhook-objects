@@ -29,7 +29,7 @@ node packages/claude-status/dist/index.js uninstall-hooks
 
 `install-hooks` registers a command on a handful of Claude hook events. On each
 event Claude runs the bundled `hook-entry.js` under bare `node`, which maps the
-event to a status and signs & POSTs it via `@webhook-objects/client`:
+event to a status and signs & POSTs it via [`@gathertown/webhook-object-sdk`](https://www.npmjs.com/package/@gathertown/webhook-object-sdk):
 
 | hook event         | status     |
 | ------------------ | ---------- |

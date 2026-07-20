@@ -10,7 +10,7 @@
  */
 import { execFile } from "node:child_process";
 import { parseArgs, promisify } from "node:util";
-import { Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { DEFAULT_THRESHOLD, isLowBattery } from "./battery";
 
 const exec = promisify(execFile);
@@ -31,7 +31,10 @@ async function main() {
 		process.exit(1);
 	}
 
-	const client = new Client({ url: values.url, secret: values.secret });
+	const client = createWebhookObjectClient({
+		url: values.url,
+		secret: values.secret,
+	});
 	const intervalMs = Number(values.interval) * 1000;
 	const threshold = Number(values.threshold);
 
@@ -52,11 +55,7 @@ async function main() {
 
 		if (on === lastOn) return;
 		try {
-			await client.send({
-				type: "switch.set_state",
-				timestamp: new Date().toISOString(),
-				data: { on },
-			});
+			await client.send("switch.set_state", { on });
 			lastOn = on;
 			console.log(`battery low: ${on}`);
 		} catch (err) {

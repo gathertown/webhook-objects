@@ -15,8 +15,11 @@
  * @module
  */
 import { parseArgs } from "node:util";
-import { ACTIVITY_BUFFER_SIZE, Client } from "@webhook-objects/client/node";
+import { createWebhookObjectClient } from "@gathertown/webhook-object-sdk";
 import { feedEntries, fetchPrs } from "./prs";
+
+/** The receiver keeps this many activity entries (a ring buffer); older ones are evicted. */
+const ACTIVITY_BUFFER_SIZE = 20;
 
 async function main() {
 	const { values } = parseArgs({
@@ -33,26 +36,26 @@ async function main() {
 		process.exit(1);
 	}
 
-	const client = new Client({ url: values.url, secret: values.secret });
+	const client = createWebhookObjectClient({
+		url: values.url,
+		secret: values.secret,
+	});
 	const intervalMs = Number(values.interval) * 1000;
 
 	// Reset once at startup so a previous run's stale feed/counter don't linger;
 	// from then on we reconcile incrementally and never wipe the feed mid-poll.
-	{
-		const timestamp = new Date().toISOString();
-		await client.send({ type: "activity.clear", timestamp, data: {} });
-		await client.send({ type: "counter.reset", timestamp, data: {} });
-	}
+	await client.send("activity.clear");
+	await client.send("counter.reset");
 	// Ids currently shown on the object. Mutated as each send lands so a partial
 	// failure leaves it accurate — the next poll retries only the missing ops.
 	const shownIds = new Set<string>();
 
-	// Send one event, isolating its failure: a single bad PR (e.g. a rejected
+	// Run one send, isolating its failure: a single bad PR (e.g. a rejected
 	// payload) must not abort the rest of the poll or skip the counter update.
 	// Returns whether it landed, so the caller only mutates `shownIds` on success.
-	const trySend = async (event: Parameters<typeof client.send>[0]) => {
+	const trySend = async (send: () => Promise<unknown>) => {
 		try {
-			await client.send(event);
+			await send();
 			return true;
 		} catch (err) {
 			console.error("send failed:", err instanceof Error ? err.message : err);
@@ -74,30 +77,23 @@ async function main() {
 		// cap to its size and let the counter report the true total.
 		const entries = feedEntries(prs, ACTIVITY_BUFFER_SIZE);
 		const currentIds = new Set(entries.map((e) => e.id));
-		const timestamp = new Date().toISOString();
 
 		// Remove before add so the ring buffer never evicts a still-shown entry.
 		for (const id of [...shownIds]) {
 			if (!currentIds.has(id)) {
-				if (
-					await trySend({ type: "activity.remove", timestamp, data: { id } })
-				) {
+				if (await trySend(() => client.send("activity.remove", { id }))) {
 					shownIds.delete(id);
 				}
 			}
 		}
 		for (const entry of entries) {
 			if (!shownIds.has(entry.id)) {
-				if (await trySend({ type: "activity.add", timestamp, data: entry })) {
+				if (await trySend(() => client.send("activity.add", entry))) {
 					shownIds.add(entry.id);
 				}
 			}
 		}
-		await trySend({
-			type: "counter.set",
-			timestamp,
-			data: { count: prs.length },
-		});
+		await trySend(() => client.send("counter.set", { count: prs.length }));
 
 		console.log(`synced ${prs.length} PR(s) awaiting review`);
 	};
