@@ -4,6 +4,10 @@
 
 A collection of quick examples for using Webhook Objects within [Gather 2.0](https://gather.town).
 
+## Smart Objects
+
+Each example drives a **Smart Object** — a Gather map object whose state is set by signed HTTP webhooks (via [`@gathertown/webhook-object-sdk`](https://www.npmjs.com/package/@gathertown/webhook-object-sdk)). For the full model — presets, capabilities, and every event with its arguments — see the [Smart Objects reference](./docs/reference.md).
+
 ## Getting Started
 
 To get started, you can explore our individual packages:
