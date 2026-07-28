@@ -1,9 +1,5 @@
 lockfileVersion: '9.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -59,6 +55,12 @@ importers:
         version: 0.1.1
 
   packages/now-playing-inbox:
+    dependencies:
+      '@gathertown/webhook-object-sdk':
+        specifier: ^0.1.1
+        version: 0.1.1
+
+  packages/worldcup-live-feed:
     dependencies:
       '@gathertown/webhook-object-sdk':
         specifier: ^0.1.1
