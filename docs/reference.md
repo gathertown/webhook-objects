@@ -25,14 +25,15 @@ The SDK handles the wire protocol — HMAC signing, retries, the 4 KB body cap, 
 
 ## Presets
 
-An object's **preset** is chosen when you place it in Gather and fixes which **capabilities** — and therefore which events — it accepts. Every preset includes the base `info` capability, and every object also answers `webhook.ping`.
+An object's **preset** is chosen when you place it in Gather and fixes which **capabilities** — and therefore which events — it accepts. Every preset includes the base `info` and `variant` capabilities, and every object also answers `webhook.ping`.
 
-| Preset    | Capabilities            | Good for                                                     |
-| --------- | ----------------------- | ------------------------------------------------------------ |
-| `counter` | info, counter           | a single number — build depth, active users, a score         |
-| `switch`  | info, switch            | a binary state — a lamp, a door, "on air"                    |
-| `status`  | info, status, activity  | an indicator with a state + a feed — an agent's status light |
-| `inbox`   | info, activity, counter | a feed with a count badge — PRs to review, incidents, tasks  |
+| Preset    | Capabilities                     | Good for                                                        |
+| --------- | -------------------------------- | --------------------------------------------------------------- |
+| `counter` | info, variant, counter           | a single number — build depth, active users, a score            |
+| `switch`  | info, variant, switch            | a binary state — a lamp, a door, "on air"                       |
+| `status`  | info, variant, status, activity  | an indicator with five states + a feed — an agent's status light |
+| `signal`  | info, variant, signal, activity  | an indicator with three states + a feed — quiet / active / alert |
+| `inbox`   | info, variant, activity, counter | a feed with a count badge — PRs to review, incidents, tasks     |
 
 ## Events
 
@@ -45,6 +46,14 @@ The object's user-facing identity.
 | Event      | Args                                                |
 | ---------- | --------------------------------------------------- |
 | `info.set` | `name?` string ≤ 120 · `description?` string ≤ 2000 |
+
+### `variant` — every object
+
+The object's color. Setting it switches the object to the matching color variant of its catalog item, the same change as picking a color in the editor, and it persists. Colors differ per object: `webhook.ping` returns the ones this object ships as `colors`. A color outside that list is ignored rather than rejected. There is no reset; send the original color again to revert.
+
+| Event         | Args                                                    |
+| ------------- | ------------------------------------------------------- |
+| `variant.set` | `color` string, one of the object's `colors` _(required)_ |
 
 ### `counter`
 
@@ -75,6 +84,15 @@ A single named indicator state.
 | `status.set`   | `state` one of `off` · `on` · `question` · `alert` · `working` _(required)_ |
 | `status.reset` | — · returns to `off`                                                         |
 
+### `signal`
+
+A three-way signal light. Its states are a subset of `status`'s, so art tagged `off` / `on` / `alert` renders for either; pick `signal` when quiet / active / needs-attention is the whole story.
+
+| Event          | Args                                                |
+| -------------- | --------------------------------------------------- |
+| `signal.set`   | `state` one of `off` · `on` · `alert` _(required)_ |
+| `signal.reset` | — · returns to `off`                                |
+
 ### `activity`
 
 A bounded, newest-wins feed rendered in the object's details popover. Each entry has a stable `id`: re-sending the same `id` updates that entry, and stale or out-of-order redeliveries are ignored (ordering uses the signed send time). The feed is capped to the newest entries, and the popover derives a favicon from the entry `url`'s host.
@@ -87,7 +105,7 @@ A bounded, newest-wins feed rendered in the object's details popover. Each entry
 
 ### `webhook.ping` — every object
 
-Reserved health check. Signed like any event but takes no data; returns the object's current preset and capability state (`pong`). Use it to verify the secret and discover which capabilities the object accepts.
+Reserved health check. Signed like any event but takes no data; returns the object's current preset, its capability state, and the `colors` its art ships (`pong`). Use it to verify the secret, discover which capabilities the object accepts, and learn which values `variant.set` will resolve.
 
 ## The examples
 

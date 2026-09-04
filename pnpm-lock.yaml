@@ -36,12 +36,12 @@ importers:
   packages/claude-status:
     dependencies:
       '@gathertown/webhook-object-sdk':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.3.0
+        version: 0.3.0
     devDependencies:
       '@gathertown/webhook-object-types':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.3.0
+        version: 0.3.0
       '@webhook-objects/z-build-config':
         specifier: workspace:*
         version: link:../z-build-config
@@ -49,20 +49,20 @@ importers:
   packages/gh-prs-inbox:
     dependencies:
       '@gathertown/webhook-object-sdk':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.3.0
+        version: 0.3.0
 
   packages/low-battery-switch:
     dependencies:
       '@gathertown/webhook-object-sdk':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.3.0
+        version: 0.3.0
 
   packages/now-playing-inbox:
     dependencies:
       '@gathertown/webhook-object-sdk':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.3.0
+        version: 0.3.0
 
   packages/z-build-config: {}
 
@@ -314,12 +314,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@gathertown/webhook-object-sdk@0.1.1':
-    resolution: {integrity: sha512-lKy/S8bA1Ux0+RAlQAEn6K5FCmQrdIF3QwE+31OBPUAsOqdFeUbb9xvrSuyus2+nqL/JOIQU3QFcFXuHxDLoiA==}
-    engines: {node: '>=18'}
+  '@gathertown/webhook-object-sdk@0.3.0':
+    resolution: {integrity: sha512-S01RnQ8W29bjGkzqPtLLZqgKyJDr2EgQhLOGHHcbbVuGKQZNnMwBHQS+Bvd5aqb46KuIZXFei46keVf2hG5cyA==}
+    engines: {node: '>=24'}
 
-  '@gathertown/webhook-object-types@0.1.1':
-    resolution: {integrity: sha512-jJBooZyBW/lRHwY7njRWjr2y1oaZEWBW719sZElV3ipv2a0EymR/AZZtW8jJrkVWP+OhuVSb7EUHVEE0dMb9mA==}
+  '@gathertown/webhook-object-types@0.3.0':
+    resolution: {integrity: sha512-13JDgGpvO6ReLJ47kMRLKYePVt50ULadWqDcqg/s9ufL9x3K+5NtKWTHZNQj/eEB9XwuGWUxNWHyvTVwg1HDOg==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -1072,12 +1072,12 @@ snapshots:
   '@esbuild/win32-x64@0.28.1':
     optional: true
 
-  '@gathertown/webhook-object-sdk@0.1.1':
+  '@gathertown/webhook-object-sdk@0.3.0':
     dependencies:
-      '@gathertown/webhook-object-types': 0.1.1
+      '@gathertown/webhook-object-types': 0.3.0
       standardwebhooks: 1.0.0
 
-  '@gathertown/webhook-object-types@0.1.1': {}
+  '@gathertown/webhook-object-types@0.3.0': {}
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
